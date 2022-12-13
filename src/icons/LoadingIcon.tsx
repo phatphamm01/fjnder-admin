@@ -1,7 +1,6 @@
-import { keyframes } from "@emotion/react";
-import React from "react";
-
-import { css, styled, theme } from "twin.macro";
+import { keyframes } from '@emotion/react';
+import React from 'react';
+import { css, styled, theme } from 'twin.macro';
 
 export interface SpinProps {
   className?: string;
@@ -12,14 +11,14 @@ export interface SpinProps {
 }
 
 const LoadingIcon: React.FC<SpinProps & React.HTMLProps<HTMLDivElement>> = ({
-  className = "",
-  color = theme("colors.primary-500"),
-  height = "2rem",
+  className = '',
+  color = theme('colors.primary-500'),
+  height = '2rem',
   style = {},
-  duration = "1.2s",
+  duration = '1.2s',
   ...others
 }) => {
-  const resolvedHeight = typeof height === "number" ? `${height}px` : height;
+  const resolvedHeight = typeof height === 'number' ? `${height}px` : height;
 
   return (
     <LoadingStyled

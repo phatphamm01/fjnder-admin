@@ -1,0 +1,29 @@
+{
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "endOfLine": "auto",
+  "htmlWhitespaceSensitivity": "css",
+  "insertPragma": false,
+  "requirePragma": false,
+  "jsxBracketSameLine": false,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "printWidth": 80,
+  "quoteProps": "as-needed",
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "importOrder": [
+    "^[./]",
+    "./styles",
+    "~/routes",
+    "~/types",
+    "~/pages",
+    "~/store|~/hooks",
+    "~/common|~/assets",
+    "~/component|~/design|~/layout",
+    "~/services",
+    "~/api-graphql"
+  ],
+  "importOrderSeparation": false,
+  "importOrderSortSpecifiers": false
+}

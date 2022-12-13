@@ -1,10 +1,9 @@
-import { useField } from "formik";
-import { ReactNode, useId, useState } from "react";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useField } from 'formik';
+import { ReactNode, useId, useState } from 'react';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import tw, { TwStyle, styled } from 'twin.macro';
 
-import tw, { styled, TwStyle } from "twin.macro";
-
-type Width = "auto" | "full";
+type Width = 'auto' | 'full';
 
 const widthStyles: Record<Width, TwStyle> = {
   auto: tw`w-auto`,
@@ -22,7 +21,7 @@ const InputStyled = styled.input<{
   ${({ disabled }) => disabled && tw`text-neutral-500`}
 `;
 
-interface Props extends React.ComponentProps<"input"> {
+interface Props extends React.ComponentProps<'input'> {
   name: string;
   label?: string;
   placeholder: string;
@@ -35,8 +34,8 @@ const Input = ({
   label,
   placeholder,
   icon,
-  width = "full",
-  type = "text",
+  width = 'full',
+  type = 'text',
   ...rest
 }: Props) => {
   const id = useId();
@@ -53,13 +52,13 @@ const Input = ({
   return (
     <div>
       {label && (
-        <label className="block mb-1 text-16 font-semibold" htmlFor={id}>
+        <label className='block mb-1 text-16 font-semibold' htmlFor={id}>
           {label}
         </label>
       )}
-      <div className="relative">
+      <div className='relative'>
         {hasIcon && (
-          <i className="absolute left-1 top-1/2 -translate-y-1/2 text-gray-20">
+          <i className='absolute left-1 top-1/2 -translate-y-1/2 text-gray-20'>
             {icon}
           </i>
         )}
@@ -70,13 +69,13 @@ const Input = ({
           {...inputProps}
           {...field}
           {...(rest as any)}
-          type={type === "password" && !visiblePassword ? "password" : "text"}
+          type={type === 'password' && !visiblePassword ? 'password' : 'text'}
         />
 
-        {type === "password" && (
+        {type === 'password' && (
           <button
-            className="text-20 text-text-secondary absolute right-1 top-1/2 -translate-y-1/2"
-            type="button"
+            className='text-20 text-text-secondary absolute right-1 top-1/2 -translate-y-1/2'
+            type='button'
             onClick={() => setVisiblePassword(!visiblePassword)}
           >
             {visiblePassword ? <AiFillEyeInvisible /> : <AiFillEye />}
@@ -84,7 +83,7 @@ const Input = ({
         )}
       </div>
       {meta.touched && meta.error && (
-        <p className="my-0.4 text-text-error text-12">{meta.error}</p>
+        <p className='my-0.4 text-text-error text-12'>{meta.error}</p>
       )}
     </div>
   );

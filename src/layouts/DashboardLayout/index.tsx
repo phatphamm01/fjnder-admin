@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { deepPath } from "~/router";
-import { Content } from "./Content";
-import { Sidebar } from "./Sidebar";
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { deepPath } from '~/router';
+import { Content } from './Content';
+import { Sidebar } from './Sidebar';
 
 export const DashboardLayout = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ export const DashboardLayout = () => {
 
   useEffect(() => {
     document.title =
-      `Finder - ${breadcrumb[breadcrumb.length - 1].title}` || "Finder";
+      `Finder - ${breadcrumb[breadcrumb.length - 1].title}` || 'Finder';
   }, [breadcrumb]);
 
   return (

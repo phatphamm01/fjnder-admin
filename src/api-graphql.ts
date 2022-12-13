@@ -387,6 +387,7 @@ export interface User {
   gender: Maybe<GenderEnum>;
   geoLocation: Maybe<GeoLocation>;
   images: Maybe<string[]>;
+  isBlocked: boolean;
   isDeleted: boolean;
   isFirstLogin: boolean;
   jobTitle: Maybe<string>;

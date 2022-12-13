@@ -1,10 +1,10 @@
-import { IndexRouteObject, NonIndexRouteObject } from "react-router-dom";
-import { Path } from "react-router-dom";
-import { PATHS } from "~/router/paths";
+import { IndexRouteObject, NonIndexRouteObject } from 'react-router-dom';
+import { Path } from 'react-router-dom';
+import { PATHS } from '~/router/paths';
 
 export type RouteObject =
   | (IndexRouteObject & { icon?: React.FC<any>; title?: string })
-  | (Omit<NonIndexRouteObject, "children"> & {
+  | (Omit<NonIndexRouteObject, 'children'> & {
       icon?: React.FC<any>;
       title?: string;
       children?: RouteObject[];

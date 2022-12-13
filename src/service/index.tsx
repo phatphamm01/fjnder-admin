@@ -1,10 +1,9 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { createUploadLink } from "apollo-upload-client";
-import { apiProvider } from "~/api-graphql";
-
-import { ENDPOINT } from "~/common/constants/endpoint";
-import { useAuthStore } from "~/store/auth";
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { createUploadLink } from 'apollo-upload-client';
+import { useAuthStore } from '~/store/auth';
+import { ENDPOINT } from '~/common/constants/endpoint';
+import { apiProvider } from '~/api-graphql';
 
 const httpLink = createUploadLink({
   uri: `${ENDPOINT}/graphql`,
@@ -18,7 +17,7 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
+      authorization: token ? `Bearer ${token}` : '',
     },
   };
 });

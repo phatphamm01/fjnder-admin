@@ -1,4 +1,4 @@
-import create from "zustand";
+import create from 'zustand';
 
 interface DashboardLayout {
   sidebarOpen: boolean;
@@ -10,5 +10,5 @@ interface DashboardLayout {
 
 export const useDashboardLayoutStore = create<DashboardLayout>((set, get) => ({
   sidebarOpen: false,
-  setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
+  setSidebarOpen: sidebarOpen => set({ sidebarOpen }),
 }));

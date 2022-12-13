@@ -5,20 +5,23 @@ import {
   TagIcon,
   UserIcon,
   UsersIcon,
-} from "@heroicons/react/24/outline";
-import { Fragment } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import { EmptyComponent } from "~/components/Empty";
-import PrivateRoute from "~/components/router-layout/PrivateRoute";
-import { DashboardLayout } from "~/layouts/DashboardLayout";
-import { Login } from "~/pages/login";
-import { PATHS } from "~/router/paths";
-import { RouteObject } from "~/types/react-router-dom";
-import { ErrorPage } from "../pages/error/index";
+} from '@heroicons/react/24/outline';
+import { Fragment } from 'react';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { PATHS } from '~/router/paths';
+import { ErrorPage } from '../pages/error/index';
+import { RouteObject } from '~/types/react-router-dom';
+import { Login } from '~/pages/login';
+import { TagPage } from '~/pages/manager/tabs';
+import { AllUserPage } from '~/pages/user/all';
+import { ReportPage } from '~/pages/user/report';
+import { EmptyComponent } from '~/components/Empty';
+import PrivateRoute from '~/components/router-layout/PrivateRoute';
+import { DashboardLayout } from '~/layouts/DashboardLayout';
 
 const dashboardRoutes: RouteObject[] = [
   {
-    title: "Dashboard",
+    title: 'Dashboard',
     icon: HomeIcon,
     path: PATHS.DASHBOARD.SELF,
     element: (
@@ -28,7 +31,7 @@ const dashboardRoutes: RouteObject[] = [
     ),
   },
   {
-    title: "Người dùng",
+    title: 'Người dùng',
     icon: UserIcon,
     path: PATHS.USER.SELF,
     children: [
@@ -37,40 +40,39 @@ const dashboardRoutes: RouteObject[] = [
         element: <Navigate to={PATHS.USER.ALL} />,
       },
       {
-        title: "All",
+        title: 'All',
         icon: UsersIcon,
         path: PATHS.USER.ALL,
         element: (
           <Fragment>
-            <EmptyComponent />
+            <AllUserPage />
           </Fragment>
         ),
       },
       {
-        title: "Báo cáo",
+        title: 'Báo cáo',
         icon: ExclamationTriangleIcon,
         path: `${PATHS.USER.REPORT}`,
         element: (
           <Fragment>
-            <EmptyComponent />
+            <ReportPage />
           </Fragment>
         ),
       },
     ],
   },
   {
-    title: "Quản lí",
+    title: 'Quản lí',
     icon: Cog6ToothIcon,
     path: PATHS.MANAGER.SELF,
     children: [
       {
-        title: "Tag",
+        title: 'Tag',
         icon: TagIcon,
         path: PATHS.MANAGER.TAG,
         element: (
           <Fragment>
-            {" "}
-            <EmptyComponent />
+            <TagPage />
           </Fragment>
         ),
       },
@@ -80,16 +82,16 @@ const dashboardRoutes: RouteObject[] = [
 
 const allRoutes: RouteObject[] = [
   {
-    path: "/",
+    path: '/',
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        path: "/",
+        path: '/',
         element: <Navigate to={PATHS.DASHBOARD.SELF} />,
       },
       {
-        path: "/",
+        path: '/',
         element: (
           <PrivateRoute>
             <DashboardLayout />
@@ -109,7 +111,7 @@ export const router = createBrowserRouter(allRoutes);
 const getNavbarPath = (data: RouteObject[]) => {
   const getPath = (paths: RouteObject[]): RouteObject[] => {
     return paths
-      .map((path) => {
+      .map(path => {
         if (path.title && path.children) {
           return { ...path, children: getPath(path.children) };
         }
@@ -128,9 +130,9 @@ const getDeepPath = () => {
   const deepPath = new Map<string, { title: string; path: string }[]>();
   const handleDeepPath = (
     data: RouteObject[],
-    paths: { title: string; path: string }[]
+    paths: { title: string; path: string }[],
   ) => {
-    data.forEach((value) => {
+    data.forEach(value => {
       if (value.path && value.title) {
         deepPath.set(value.path, [
           ...paths,

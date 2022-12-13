@@ -1,4 +1,4 @@
-import jwtDecode, { JwtPayload } from "jwt-decode";
+import jwtDecode, { JwtPayload } from 'jwt-decode';
 
 export const isTokenExpired = (token?: string) => {
   if (!token) return;
