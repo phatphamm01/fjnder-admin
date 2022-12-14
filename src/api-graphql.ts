@@ -93,7 +93,7 @@ import {
   MutationHookOptions,
   QueryHookOptions,
   useLazyQuery,
-  useMutation,
+  useMutation
 } from "@apollo/client";
 
 import { ApolloClient, execute } from "@apollo/client/core";

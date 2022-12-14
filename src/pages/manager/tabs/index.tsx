@@ -17,13 +17,13 @@ export const TagPage: FC<ITagPage> = () => {
     'totalCount',
     {
       results: [
+        'name',
+        'type',
         '_id',
-        'phoneNumber',
-        'images',
-        'username',
-        'age',
-        'aboutMe',
-        { tags: ['_id', 'name'] },
+        'parentType',
+        'keyword',
+        'description',
+        'createdAt',
       ],
     },
   ]);
@@ -31,14 +31,13 @@ export const TagPage: FC<ITagPage> = () => {
   const data = response?.getAllTag.results || [];
 
   useEffect(() => {
-    fetchGetTag({
-      variables: { filter: {}, pagination: { page: 0, size: 9999 } },
-    });
+    fetchGetTag();
   }, []);
 
   const columnsTable = [
     { name: 'Tên', selector: row => row.name },
     { name: 'Loại', selector: row => row.type },
+    { name: 'Từ khoá', selector: row => new Date(row.createdAt) },
   ] as TableColumn<NonNullable<Tag>>[];
 
   return (

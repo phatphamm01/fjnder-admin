@@ -7,10 +7,11 @@ import {
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import { Fragment } from 'react';
-import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { PATHS } from '~/router/paths';
 import { ErrorPage } from '../pages/error/index';
 import { RouteObject } from '~/types/react-router-dom';
+import { NotfoundPage } from '~/pages/404';
 import { Login } from '~/pages/login';
 import { TagPage } from '~/pages/manager/tabs';
 import { AllUserPage } from '~/pages/user/all';
@@ -23,6 +24,7 @@ const dashboardRoutes: RouteObject[] = [
   {
     title: 'Dashboard',
     icon: HomeIcon,
+    errorElement: <ErrorPage />,
     path: PATHS.DASHBOARD.SELF,
     element: (
       <Fragment>
@@ -33,6 +35,7 @@ const dashboardRoutes: RouteObject[] = [
   {
     title: 'Người dùng',
     icon: UserIcon,
+    errorElement: <ErrorPage />,
     path: PATHS.USER.SELF,
     children: [
       {
@@ -42,6 +45,7 @@ const dashboardRoutes: RouteObject[] = [
       {
         title: 'All',
         icon: UsersIcon,
+        errorElement: <ErrorPage />,
         path: PATHS.USER.ALL,
         element: (
           <Fragment>
@@ -52,6 +56,7 @@ const dashboardRoutes: RouteObject[] = [
       {
         title: 'Báo cáo',
         icon: ExclamationTriangleIcon,
+        errorElement: <ErrorPage />,
         path: `${PATHS.USER.REPORT}`,
         element: (
           <Fragment>
@@ -64,6 +69,7 @@ const dashboardRoutes: RouteObject[] = [
   {
     title: 'Quản lí',
     icon: Cog6ToothIcon,
+    errorElement: <ErrorPage />,
     path: PATHS.MANAGER.SELF,
     children: [
       {
@@ -83,7 +89,7 @@ const dashboardRoutes: RouteObject[] = [
 const allRoutes: RouteObject[] = [
   {
     path: '/',
-    errorElement: <ErrorPage />,
+    errorElement: <NotfoundPage />,
     children: [
       {
         index: true,
@@ -155,5 +161,3 @@ const getDeepPath = () => {
 
 export const deepPath = getDeepPath();
 export const navbarList = getNavbarPath(dashboardRoutes);
-
-console.log({ deepPath });
