@@ -3,7 +3,7 @@ import create from 'zustand';
 import { persist } from 'zustand/middleware';
 import { apiCaller } from '../service/index';
 import { getUser, setUser } from '~/store/user';
-import { SignInArgs } from '~/api-graphql';
+import { SignInAsAdminArgs } from '~/api-graphql';
 
 interface UserStore {
   accessToken?: string;
@@ -11,7 +11,7 @@ interface UserStore {
 }
 
 interface UserAction {
-  signIn: (args: SignInArgs) => Promise<boolean>;
+  signIn: (args: SignInAsAdminArgs) => Promise<boolean>;
   logout: () => void;
   setSession: (data: {
     accessToken: string;
@@ -30,7 +30,7 @@ export const useAuthStore = create<UserStore & UserAction>()(
       },
       signIn: async args => {
         const { accessToken, refreshToken } = await apiCaller
-          .signIn(['accessToken', 'refreshToken'])
+          .signInAsAdmin(['accessToken', 'refreshToken'])
           .$args(args)
           .$fetch();
 

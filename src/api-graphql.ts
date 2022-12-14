@@ -42,20 +42,20 @@ const queryBuilder = <T>(fields?: GenFields<T>): string => {
   return fields
     ? fields
         .map((field: any) => {
-          if (typeof field === "object") {
-            let result = "";
+          if (typeof field === 'object') {
+            let result = '';
 
             Object.entries<any>(field as Record<string, any>).forEach(
               ([key, values], index, array) => {
                 result += `${key} ${
-                  values.length > 0 ? "{ " + queryBuilder(values) + " }" : ""
+                  values.length > 0 ? '{ ' + queryBuilder(values) + ' }' : ''
                 }`;
 
                 // If it's not the last item in array, join with comma
                 if (index < array.length - 1) {
-                  result += ", ";
+                  result += ', ';
                 }
-              }
+              },
             );
 
             return result;
@@ -63,24 +63,24 @@ const queryBuilder = <T>(fields?: GenFields<T>): string => {
             return `${field}`;
           }
         })
-        .join("\n ")
-    : "";
+        .join('\n ')
+    : '';
 };
 
 const guessFragmentType = (fragment: string | DocumentNode) => {
   let isString = false;
   let isFragment = false;
-  let fragmentName = "";
-  if (typeof fragment === "string") {
+  let fragmentName = '';
+  if (typeof fragment === 'string') {
     isString = true;
-  } else if (typeof fragment === "object" && fragment.definitions.length) {
+  } else if (typeof fragment === 'object' && fragment.definitions.length) {
     isFragment = true;
     const definition = fragment.definitions[0];
-    if (definition.kind === "FragmentDefinition") {
+    if (definition.kind === 'FragmentDefinition') {
       fragmentName = definition.name.value;
     } else {
       throw new Error(
-        `The argument passed is not a fragment definition, got ${definition.kind} instead`
+        `The argument passed is not a fragment definition, got ${definition.kind} instead`,
       );
     }
   }
@@ -90,15 +90,17 @@ const guessFragmentType = (fragment: string | DocumentNode) => {
 import {
   DocumentNode,
   gql,
-  MutationHookOptions,
-  QueryHookOptions,
+  useMutation,
   useLazyQuery,
-  useMutation
-} from "@apollo/client";
+  useSubscription,
+  QueryHookOptions,
+  MutationHookOptions,
+  SubscriptionHookOptions,
+  MutationTuple,
+} from '@apollo/client';
 
-import { ApolloClient, execute } from "@apollo/client/core";
-import { OperationDefinitionNode } from "graphql";
-import create from "zustand";
+import { OperationDefinitionNode } from 'graphql';
+import { ApolloClient, execute } from '@apollo/client/core';
 
 export interface Address {
   city: Maybe<string>;
@@ -174,10 +176,10 @@ export interface DiscoverySettingsInput {
 }
 
 export enum FilterByDate {
-  Last_year = "LAST_YEAR",
-  Seven_days_ago = "SEVEN_DAYS_AGO",
-  Thirty_days_ago = "THIRTY_DAYS_AGO",
-  This_year = "THIS_YEAR",
+  Last_year = 'LAST_YEAR',
+  Seven_days_ago = 'SEVEN_DAYS_AGO',
+  Thirty_days_ago = 'THIRTY_DAYS_AGO',
+  This_year = 'THIS_YEAR',
 }
 export interface FilterGetAllMessage {
   conversion_id?: string;
@@ -210,8 +212,8 @@ export interface FilterStatisticUser {
 }
 
 export enum GenderEnum {
-  Female = "FEMALE",
-  Male = "MALE",
+  Female = 'FEMALE',
+  Male = 'MALE',
 }
 export interface GeoLocation {
   /** [lng, lat]*/
@@ -230,9 +232,9 @@ export interface LoginInput {
 }
 
 export enum LookingFor {
-  All = "ALL",
-  Men = "MEN",
-  Women = "WOMEN",
+  All = 'ALL',
+  Men = 'MEN',
+  Women = 'WOMEN',
 }
 export interface MatchRequest {
   createdAt: Maybe<string>;
@@ -268,8 +270,8 @@ export interface MessageResult {
 }
 
 export enum MessageType {
-  Image = "IMAGE",
-  Text = "TEXT",
+  Image = 'IMAGE',
+  Text = 'TEXT',
 }
 export interface MySetting {
   controlWhoSeesYou: ControlWhoSeesYou;
@@ -314,13 +316,13 @@ export interface ResetPasswordInput {
 }
 
 export enum SortOption {
-  Age = "AGE",
-  Az = "AZ",
-  Za = "ZA",
+  Age = 'AGE',
+  Az = 'AZ',
+  Za = 'ZA',
 }
 export enum StatusActive {
-  Offline = "OFFLINE",
-  Online = "ONLINE",
+  Offline = 'OFFLINE',
+  Online = 'ONLINE',
 }
 
 export interface Tag {
@@ -342,14 +344,14 @@ export interface TagResult {
 }
 
 export enum TagType {
-  Dietary_preference = "DIETARY_PREFERENCE",
-  Education = "EDUCATION",
-  Life_style = "LIFE_STYLE",
-  Passions = "PASSIONS",
-  Personality_type = "PERSONALITY_TYPE",
-  Pets = "PETS",
-  Smoke_question = "SMOKE_QUESTION",
-  Zodiac = "ZODIAC",
+  Dietary_preference = 'DIETARY_PREFERENCE',
+  Education = 'EDUCATION',
+  Life_style = 'LIFE_STYLE',
+  Passions = 'PASSIONS',
+  Personality_type = 'PERSONALITY_TYPE',
+  Pets = 'PETS',
+  Smoke_question = 'SMOKE_QUESTION',
+  Zodiac = 'ZODIAC',
 }
 export interface UpdateTagInput {
   description?: string;
@@ -625,6 +627,7 @@ export type ExecutableQueryWithArgs<T, A> = QueryWithArgs<T, A>;
 export interface ExecutableQueryWithOptionalArgs<T, A>
   extends QueryWithOptionalArgs<T, A>,
     Executable<T> {}
+import create from 'zustand';
 export const useLoadingStore = create<
   {
     [K in keyof ReturnType<typeof apiProvider> as K extends `${string}`
@@ -633,7 +636,7 @@ export const useLoadingStore = create<
   } & {
     setLoading: ({ name, loading }: { name: string; loading: boolean }) => void;
   }
->((set) => ({
+>(set => ({
   setLoading: ({ name, loading }: { name: string; loading: boolean }) => {
     set({ [`${name}Loading`]: loading });
   },
@@ -643,7 +646,7 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
   const abortableQuery = <T, A = null>(
     query: DocumentNode,
     args: boolean,
-    optionalArgs: boolean
+    optionalArgs: boolean,
   ) => {
     let observableQuery: ZenObservable.Subscription;
     const parsedQuery = query.definitions[0] as OperationDefinitionNode;
@@ -671,7 +674,7 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
                 reject({ gqlErrors: errors, variables, query: queryName });
               }
             },
-            error: (error) =>
+            error: error =>
               reject({ gqlErrors: [error], variables, query: queryName }),
             complete: () => {
               pending = false;
@@ -715,7 +718,7 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
         } as any;
       }
     } else {
-      throw new Error("query argument is not a GraphQL definition");
+      throw new Error('query argument is not a GraphQL definition');
     }
   };
 
@@ -769,7 +772,7 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       return abortableQuery(queryTemplate, true, false);
     },
     getAllConversation(
-      fields: GenFields<ConversationResult>
+      fields: GenFields<ConversationResult>,
     ): ExecutableQueryWithOptionalArgs<
       ConversationResult,
       GetAllConversationArgs
@@ -777,102 +780,102 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getAllConversation ($pagination: PaginationInput) {
         getAllConversation(pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
     },
     getAllMessage(
-      fields: GenFields<MessageResult>
+      fields: GenFields<MessageResult>,
     ): ExecutableQueryWithOptionalArgs<MessageResult, GetAllMessageArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getAllMessage ($filter: FilterGetAllMessage,$pagination: PaginationMessageInput) {
         getAllMessage(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
     },
     getAllReportsUser(
-      fields: GenFields<UserResult>
+      fields: GenFields<UserResult>,
     ): ExecutableQueryWithOptionalArgs<UserResult, GetAllReportsUserArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getAllReportsUser ($pagination: PaginationInput) {
         getAllReportsUser(pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
     },
     getAllTag(
-      fields: GenFields<TagResult>
+      fields: GenFields<TagResult>,
     ): ExecutableQueryWithOptionalArgs<TagResult, GetAllTagArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getAllTag ($filter: FilterGetAllTag,$pagination: PaginationInput) {
         getAllTag(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
     },
     getAllUser(
-      fields: GenFields<UserResult>
+      fields: GenFields<UserResult>,
     ): ExecutableQueryWithOptionalArgs<UserResult, GetAllUserArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getAllUser ($filter: FilterGetAllUser,$pagination: PaginationInput) {
         getAllUser(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
     },
     getAllUserMatched(
-      fields: GenFields<ConversationResult>
+      fields: GenFields<ConversationResult>,
     ): ExecutableQueryWithOptionalArgs<
       ConversationResult,
       GetAllUserMatchedArgs
@@ -880,16 +883,16 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getAllUserMatched ($isMessaged: Boolean,$pagination: PaginationInput) {
         getAllUserMatched(isMessaged: $isMessaged,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
@@ -898,16 +901,16 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getCurrentAddress  {
         getCurrentAddress {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, false, false);
@@ -916,36 +919,36 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getCurrentUser  {
         getCurrentUser {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, false, false);
     },
     getOneConversation(
-      fields: GenFields<Conversation>
+      fields: GenFields<Conversation>,
     ): ExecutableQueryWithOptionalArgs<Conversation, GetOneConversationArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query getOneConversation ($input: FilterGetOneConversation) {
         getOneConversation(input: $input) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
@@ -954,16 +957,16 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query refreshToken  {
         refreshToken {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, false, false);
@@ -977,81 +980,81 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       return abortableQuery(queryTemplate, false, false);
     },
     signInAsAdmin(
-      fields: GenFields<JwtPayload>
+      fields: GenFields<JwtPayload>,
     ): ExecutableQueryWithArgs<JwtPayload, SignInAsAdminArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query signInAsAdmin ($email: String!,$password: String!) {
         signInAsAdmin(email: $email,password: $password) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, false);
     },
     statisticUser(
-      fields: GenFields<UserResult>
+      fields: GenFields<UserResult>,
     ): ExecutableQueryWithOptionalArgs<UserResult, StatisticUserArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query statisticUser ($filter: FilterStatisticUser,$pagination: PaginationInput) {
         statisticUser(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, true);
     },
     verifyTokenFacebook(
-      fields: GenFields<JwtPayload>
+      fields: GenFields<JwtPayload>,
     ): ExecutableQueryWithArgs<JwtPayload, VerifyTokenFacebookArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query verifyTokenFacebook ($token: String!) {
         verifyTokenFacebook(token: $token) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, false);
     },
     verifyTokenGoogle(
-      fields: GenFields<JwtPayload>
+      fields: GenFields<JwtPayload>,
     ): ExecutableQueryWithArgs<JwtPayload, VerifyTokenGoogleArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       query verifyTokenGoogle ($token: String!) {
         verifyTokenGoogle(token: $token) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, false);
@@ -1097,21 +1100,21 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       return abortableQuery(queryTemplate, true, false);
     },
     createConversation(
-      fields: GenFields<Conversation>
+      fields: GenFields<Conversation>,
     ): ExecutableQueryWithArgs<Conversation, CreateConversationArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       mutation createConversation ($input: CreateConversationInput!) {
         createConversation(input: $input) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, false);
@@ -1165,21 +1168,21 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       return abortableQuery(queryTemplate, true, false);
     },
     removeMessage(
-      fields: GenFields<Message>
+      fields: GenFields<Message>,
     ): ExecutableQueryWithArgs<Message, RemoveMessageArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       mutation removeMessage ($message_id: ObjectID!) {
         removeMessage(message_id: $message_id) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, false);
@@ -1209,21 +1212,21 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
       return abortableQuery(queryTemplate, true, false);
     },
     signIn(
-      fields: GenFields<JwtPayload>
+      fields: GenFields<JwtPayload>,
     ): ExecutableQueryWithArgs<JwtPayload, SignInArgs> {
       const fragment = queryBuilder(fields);
       let isString = false;
       let isFragment = false;
-      let fragmentName = "";
+      let fragmentName = '';
       if (fragment)
         ({ isString, isFragment, fragmentName } = guessFragmentType(fragment));
 
       const queryTemplate = gql`
       mutation signIn ($input: LoginInput!) {
         signIn(input: $input) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
       return abortableQuery(queryTemplate, true, false);
@@ -1304,7 +1307,7 @@ export const apiProvider = (apolloClient: ApolloClient<any>) => {
 };
 
 export const useCalUserPercent = (
-  options?: QueryHookOptions<{ calUserPercent: number }>
+  options?: QueryHookOptions<{ calUserPercent: number }>,
 ) => {
   const query = gql`
     query calUserPercent {
@@ -1315,7 +1318,7 @@ export const useCalUserPercent = (
 };
 
 export const useConfirmMail = (
-  options?: QueryHookOptions<{ confirmMail: boolean }, ConfirmMailArgs>
+  options?: QueryHookOptions<{ confirmMail: boolean }, ConfirmMailArgs>,
 ) => {
   const query = gql`
     query confirmMail($code: Float!, $email: String!) {
@@ -1324,12 +1327,12 @@ export const useConfirmMail = (
   `;
   return useLazyQuery<{ confirmMail: boolean }, ConfirmMailArgs>(
     query,
-    options
+    options,
   );
 };
 
 export const useCreateMultiTag = (
-  options?: QueryHookOptions<{ createMultiTag: boolean }>
+  options?: QueryHookOptions<{ createMultiTag: boolean }>,
 ) => {
   const query = gql`
     query createMultiTag {
@@ -1340,7 +1343,7 @@ export const useCreateMultiTag = (
 };
 
 export const useCreateMultiUser = (
-  options?: QueryHookOptions<{ createMultiUser: boolean }>
+  options?: QueryHookOptions<{ createMultiUser: boolean }>,
 ) => {
   const query = gql`
     query createMultiUser {
@@ -1351,7 +1354,7 @@ export const useCreateMultiUser = (
 };
 
 export const useDeleteAccount = (
-  options?: QueryHookOptions<{ deleteAccount: boolean }>
+  options?: QueryHookOptions<{ deleteAccount: boolean }>,
 ) => {
   const query = gql`
     query deleteAccount {
@@ -1362,7 +1365,7 @@ export const useDeleteAccount = (
 };
 
 export const useForgotPassword = (
-  options?: QueryHookOptions<{ forgotPassword: boolean }, ForgotPasswordArgs>
+  options?: QueryHookOptions<{ forgotPassword: boolean }, ForgotPasswordArgs>,
 ) => {
   const query = gql`
     query forgotPassword($email: String!) {
@@ -1371,7 +1374,7 @@ export const useForgotPassword = (
   `;
   return useLazyQuery<{ forgotPassword: boolean }, ForgotPasswordArgs>(
     query,
-    options
+    options,
   );
 };
 
@@ -1380,16 +1383,16 @@ export const useGetAllConversation = (
   options?: QueryHookOptions<
     { getAllConversation: ConversationResult },
     GetAllConversationArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getAllConversation ($pagination: PaginationInput) {
         getAllConversation(pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<
@@ -1403,21 +1406,21 @@ export const useGetAllMessage = (
   options?: QueryHookOptions<
     { getAllMessage: MessageResult },
     GetAllMessageArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getAllMessage ($filter: FilterGetAllMessage,$pagination: PaginationMessageInput) {
         getAllMessage(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ getAllMessage: MessageResult }, GetAllMessageArgs>(
     query,
-    options
+    options,
   );
 };
 
@@ -1426,36 +1429,36 @@ export const useGetAllReportsUser = (
   options?: QueryHookOptions<
     { getAllReportsUser: UserResult },
     GetAllReportsUserArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getAllReportsUser ($pagination: PaginationInput) {
         getAllReportsUser(pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ getAllReportsUser: UserResult }, GetAllReportsUserArgs>(
     query,
-    options
+    options,
   );
 };
 
 export const useGetAllTag = (
   fields: GenFields<TagResult>,
-  options?: QueryHookOptions<{ getAllTag: TagResult }, GetAllTagArgs>
+  options?: QueryHookOptions<{ getAllTag: TagResult }, GetAllTagArgs>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getAllTag ($filter: FilterGetAllTag,$pagination: PaginationInput) {
         getAllTag(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ getAllTag: TagResult }, GetAllTagArgs>(query, options);
@@ -1463,21 +1466,21 @@ export const useGetAllTag = (
 
 export const useGetAllUser = (
   fields: GenFields<UserResult>,
-  options?: QueryHookOptions<{ getAllUser: UserResult }, GetAllUserArgs>
+  options?: QueryHookOptions<{ getAllUser: UserResult }, GetAllUserArgs>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getAllUser ($filter: FilterGetAllUser,$pagination: PaginationInput) {
         getAllUser(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ getAllUser: UserResult }, GetAllUserArgs>(
     query,
-    options
+    options,
   );
 };
 
@@ -1486,16 +1489,16 @@ export const useGetAllUserMatched = (
   options?: QueryHookOptions<
     { getAllUserMatched: ConversationResult },
     GetAllUserMatchedArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getAllUserMatched ($isMessaged: Boolean,$pagination: PaginationInput) {
         getAllUserMatched(isMessaged: $isMessaged,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<
@@ -1506,16 +1509,16 @@ export const useGetAllUserMatched = (
 
 export const useGetCurrentAddress = (
   fields: GenFields<Address>,
-  options?: QueryHookOptions<{ getCurrentAddress: Address }>
+  options?: QueryHookOptions<{ getCurrentAddress: Address }>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getCurrentAddress  {
         getCurrentAddress {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ getCurrentAddress: Address }>(query, options);
@@ -1523,16 +1526,16 @@ export const useGetCurrentAddress = (
 
 export const useGetCurrentUser = (
   fields: GenFields<User>,
-  options?: QueryHookOptions<{ getCurrentUser: User }>
+  options?: QueryHookOptions<{ getCurrentUser: User }>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getCurrentUser  {
         getCurrentUser {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ getCurrentUser: User }>(query, options);
@@ -1543,16 +1546,16 @@ export const useGetOneConversation = (
   options?: QueryHookOptions<
     { getOneConversation: Conversation },
     GetOneConversationArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query getOneConversation ($input: FilterGetOneConversation) {
         getOneConversation(input: $input) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<
@@ -1563,23 +1566,23 @@ export const useGetOneConversation = (
 
 export const useRefreshToken = (
   fields: GenFields<JwtPayload>,
-  options?: QueryHookOptions<{ refreshToken: JwtPayload }>
+  options?: QueryHookOptions<{ refreshToken: JwtPayload }>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query refreshToken  {
         refreshToken {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ refreshToken: JwtPayload }>(query, options);
 };
 
 export const useResetCache = (
-  options?: QueryHookOptions<{ resetCache: boolean }>
+  options?: QueryHookOptions<{ resetCache: boolean }>,
 ) => {
   const query = gql`
     query resetCache {
@@ -1591,41 +1594,41 @@ export const useResetCache = (
 
 export const useSignInAsAdmin = (
   fields: GenFields<JwtPayload>,
-  options?: QueryHookOptions<{ signInAsAdmin: JwtPayload }, SignInAsAdminArgs>
+  options?: QueryHookOptions<{ signInAsAdmin: JwtPayload }, SignInAsAdminArgs>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query signInAsAdmin ($email: String!,$password: String!) {
         signInAsAdmin(email: $email,password: $password) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ signInAsAdmin: JwtPayload }, SignInAsAdminArgs>(
     query,
-    options
+    options,
   );
 };
 
 export const useStatisticUser = (
   fields: GenFields<UserResult>,
-  options?: QueryHookOptions<{ statisticUser: UserResult }, StatisticUserArgs>
+  options?: QueryHookOptions<{ statisticUser: UserResult }, StatisticUserArgs>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query statisticUser ($filter: FilterStatisticUser,$pagination: PaginationInput) {
         statisticUser(filter: $filter,pagination: $pagination) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ statisticUser: UserResult }, StatisticUserArgs>(
     query,
-    options
+    options,
   );
 };
 
@@ -1634,16 +1637,16 @@ export const useVerifyTokenFacebook = (
   options?: QueryHookOptions<
     { verifyTokenFacebook: JwtPayload },
     VerifyTokenFacebookArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query verifyTokenFacebook ($token: String!) {
         verifyTokenFacebook(token: $token) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<
@@ -1657,26 +1660,29 @@ export const useVerifyTokenGoogle = (
   options?: QueryHookOptions<
     { verifyTokenGoogle: JwtPayload },
     VerifyTokenGoogleArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const query = gql`
       query verifyTokenGoogle ($token: String!) {
         verifyTokenGoogle(token: $token) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useLazyQuery<{ verifyTokenGoogle: JwtPayload }, VerifyTokenGoogleArgs>(
     query,
-    options
+    options,
   );
 };
 
 export const useChangePassword = (
-  options?: MutationHookOptions<{ changePassword: boolean }, ChangePasswordArgs>
+  options?: MutationHookOptions<
+    { changePassword: boolean },
+    ChangePasswordArgs
+  >,
 ) => {
   const mutation = gql`
     mutation changePassword(
@@ -1693,12 +1699,12 @@ export const useChangePassword = (
   `;
   return useMutation<{ changePassword: boolean }, ChangePasswordArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useChangeSetting = (
-  options?: MutationHookOptions<{ changeSetting: boolean }, ChangeSettingArgs>
+  options?: MutationHookOptions<{ changeSetting: boolean }, ChangeSettingArgs>,
 ) => {
   const mutation = gql`
     mutation changeSetting($input: MySettingInput!) {
@@ -1707,7 +1713,7 @@ export const useChangeSetting = (
   `;
   return useMutation<{ changeSetting: boolean }, ChangeSettingArgs>(
     mutation,
-    options
+    options,
   );
 };
 
@@ -1715,7 +1721,7 @@ export const useConfirmBlockUser = (
   options?: MutationHookOptions<
     { confirmBlockUser: boolean },
     ConfirmBlockUserArgs
-  >
+  >,
 ) => {
   const mutation = gql`
     mutation confirmBlockUser($user_id: ObjectID!) {
@@ -1724,7 +1730,7 @@ export const useConfirmBlockUser = (
   `;
   return useMutation<{ confirmBlockUser: boolean }, ConfirmBlockUserArgs>(
     mutation,
-    options
+    options,
   );
 };
 
@@ -1732,7 +1738,7 @@ export const useConfirmDeleteAccount = (
   options?: MutationHookOptions<
     { confirmDeleteAccount: boolean },
     ConfirmDeleteAccountArgs
-  >
+  >,
 ) => {
   const mutation = gql`
     mutation confirmDeleteAccount($code: Float!, $email: String!) {
@@ -1750,16 +1756,16 @@ export const useCreateConversation = (
   options?: MutationHookOptions<
     { createConversation: Conversation },
     CreateConversationArgs
-  >
+  >,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const mutation = gql`
       mutation createConversation ($input: CreateConversationInput!) {
         createConversation(input: $input) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useMutation<
@@ -1769,7 +1775,7 @@ export const useCreateConversation = (
 };
 
 export const useCreateMessage = (
-  options?: MutationHookOptions<{ createMessage: boolean }, CreateMessageArgs>
+  options?: MutationHookOptions<{ createMessage: boolean }, CreateMessageArgs>,
 ) => {
   const mutation = gql`
     mutation createMessage($input: MessageInput!) {
@@ -1778,12 +1784,12 @@ export const useCreateMessage = (
   `;
   return useMutation<{ createMessage: boolean }, CreateMessageArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useCreateTag = (
-  options?: MutationHookOptions<{ createTag: boolean }, CreateTagArgs>
+  options?: MutationHookOptions<{ createTag: boolean }, CreateTagArgs>,
 ) => {
   const mutation = gql`
     mutation createTag($input: CreateTagInput!) {
@@ -1797,7 +1803,7 @@ export const useDeclineBlockUser = (
   options?: MutationHookOptions<
     { declineBlockUser: boolean },
     DeclineBlockUserArgs
-  >
+  >,
 ) => {
   const mutation = gql`
     mutation declineBlockUser($user_id: ObjectID!) {
@@ -1806,12 +1812,12 @@ export const useDeclineBlockUser = (
   `;
   return useMutation<{ declineBlockUser: boolean }, DeclineBlockUserArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useDeleteFile = (
-  options?: MutationHookOptions<{ deleteFile: boolean }, DeleteFileArgs>
+  options?: MutationHookOptions<{ deleteFile: boolean }, DeleteFileArgs>,
 ) => {
   const mutation = gql`
     mutation deleteFile($fileUrl: String!) {
@@ -1820,12 +1826,12 @@ export const useDeleteFile = (
   `;
   return useMutation<{ deleteFile: boolean }, DeleteFileArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useDeleteTag = (
-  options?: MutationHookOptions<{ deleteTag: boolean }, DeleteTagArgs>
+  options?: MutationHookOptions<{ deleteTag: boolean }, DeleteTagArgs>,
 ) => {
   const mutation = gql`
     mutation deleteTag($tag_id: ObjectID!) {
@@ -1836,7 +1842,7 @@ export const useDeleteTag = (
 };
 
 export const useLikeUser = (
-  options?: MutationHookOptions<{ likeUser: boolean }, LikeUserArgs>
+  options?: MutationHookOptions<{ likeUser: boolean }, LikeUserArgs>,
 ) => {
   const mutation = gql`
     mutation likeUser($user_id: ObjectID!) {
@@ -1848,26 +1854,26 @@ export const useLikeUser = (
 
 export const useRemoveMessage = (
   fields: GenFields<Message>,
-  options?: MutationHookOptions<{ removeMessage: Message }, RemoveMessageArgs>
+  options?: MutationHookOptions<{ removeMessage: Message }, RemoveMessageArgs>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const mutation = gql`
       mutation removeMessage ($message_id: ObjectID!) {
         removeMessage(message_id: $message_id) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useMutation<{ removeMessage: Message }, RemoveMessageArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useReportUser = (
-  options?: MutationHookOptions<{ reportUser: boolean }, ReportUserArgs>
+  options?: MutationHookOptions<{ reportUser: boolean }, ReportUserArgs>,
 ) => {
   const mutation = gql`
     mutation reportUser(
@@ -1884,12 +1890,12 @@ export const useReportUser = (
   `;
   return useMutation<{ reportUser: boolean }, ReportUserArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useResetPassword = (
-  options?: MutationHookOptions<{ resetPassword: boolean }, ResetPasswordArgs>
+  options?: MutationHookOptions<{ resetPassword: boolean }, ResetPasswordArgs>,
 ) => {
   const mutation = gql`
     mutation resetPassword($input: ResetPasswordInput!) {
@@ -1898,29 +1904,29 @@ export const useResetPassword = (
   `;
   return useMutation<{ resetPassword: boolean }, ResetPasswordArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useSignIn = (
   fields: GenFields<JwtPayload>,
-  options?: MutationHookOptions<{ signIn: JwtPayload }, SignInArgs>
+  options?: MutationHookOptions<{ signIn: JwtPayload }, SignInArgs>,
 ) => {
   const fragment = queryBuilder(fields);
   const { isString, isFragment, fragmentName } = guessFragmentType(fragment);
   const mutation = gql`
       mutation signIn ($input: LoginInput!) {
         signIn(input: $input) {
-          ${isString ? fragment : "..." + fragmentName}
+          ${isString ? fragment : '...' + fragmentName}
         }
-      } ${isFragment ? fragment : ""}
+      } ${isFragment ? fragment : ''}
       `;
 
   return useMutation<{ signIn: JwtPayload }, SignInArgs>(mutation, options);
 };
 
 export const useSignUp = (
-  options?: MutationHookOptions<{ signUp: boolean }, SignUpArgs>
+  options?: MutationHookOptions<{ signUp: boolean }, SignUpArgs>,
 ) => {
   const mutation = gql`
     mutation signUp($input: RegisterInput!) {
@@ -1931,7 +1937,7 @@ export const useSignUp = (
 };
 
 export const useSkipUser = (
-  options?: MutationHookOptions<{ skipUser: boolean }, SkipUserArgs>
+  options?: MutationHookOptions<{ skipUser: boolean }, SkipUserArgs>,
 ) => {
   const mutation = gql`
     mutation skipUser($user_id: ObjectID!) {
@@ -1942,7 +1948,7 @@ export const useSkipUser = (
 };
 
 export const useUnMatched = (
-  options?: MutationHookOptions<{ unMatched: boolean }, UnMatchedArgs>
+  options?: MutationHookOptions<{ unMatched: boolean }, UnMatchedArgs>,
 ) => {
   const mutation = gql`
     mutation unMatched($user_id: ObjectID!) {
@@ -1953,7 +1959,7 @@ export const useUnMatched = (
 };
 
 export const useUnSkipUser = (
-  options?: MutationHookOptions<{ unSkipUser: boolean }, UnSkipUserArgs>
+  options?: MutationHookOptions<{ unSkipUser: boolean }, UnSkipUserArgs>,
 ) => {
   const mutation = gql`
     mutation unSkipUser($user_id: ObjectID!) {
@@ -1962,12 +1968,12 @@ export const useUnSkipUser = (
   `;
   return useMutation<{ unSkipUser: boolean }, UnSkipUserArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useUnlikeUser = (
-  options?: MutationHookOptions<{ unlikeUser: boolean }, UnlikeUserArgs>
+  options?: MutationHookOptions<{ unlikeUser: boolean }, UnlikeUserArgs>,
 ) => {
   const mutation = gql`
     mutation unlikeUser($user_id: ObjectID!) {
@@ -1976,12 +1982,15 @@ export const useUnlikeUser = (
   `;
   return useMutation<{ unlikeUser: boolean }, UnlikeUserArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useUpdateLocation = (
-  options?: MutationHookOptions<{ updateLocation: boolean }, UpdateLocationArgs>
+  options?: MutationHookOptions<
+    { updateLocation: boolean },
+    UpdateLocationArgs
+  >,
 ) => {
   const mutation = gql`
     mutation updateLocation($coordinates: [Float!]!) {
@@ -1990,12 +1999,12 @@ export const useUpdateLocation = (
   `;
   return useMutation<{ updateLocation: boolean }, UpdateLocationArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useUpdateProfile = (
-  options?: MutationHookOptions<{ updateProfile: boolean }, UpdateProfileArgs>
+  options?: MutationHookOptions<{ updateProfile: boolean }, UpdateProfileArgs>,
 ) => {
   const mutation = gql`
     mutation updateProfile($input: UpdateUserInput!) {
@@ -2004,12 +2013,12 @@ export const useUpdateProfile = (
   `;
   return useMutation<{ updateProfile: boolean }, UpdateProfileArgs>(
     mutation,
-    options
+    options,
   );
 };
 
 export const useUpdateTag = (
-  options?: MutationHookOptions<{ updateTag: boolean }, UpdateTagArgs>
+  options?: MutationHookOptions<{ updateTag: boolean }, UpdateTagArgs>,
 ) => {
   const mutation = gql`
     mutation updateTag($input: UpdateTagInput!, $tag_id: ObjectID!) {
@@ -2020,7 +2029,7 @@ export const useUpdateTag = (
 };
 
 export const useUploadFile = (
-  options?: MutationHookOptions<{ uploadFile: string }, UploadFileArgs>
+  options?: MutationHookOptions<{ uploadFile: string }, UploadFileArgs>,
 ) => {
   const mutation = gql`
     mutation uploadFile($file: Upload!) {

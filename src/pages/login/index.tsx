@@ -38,7 +38,7 @@ export const Login = () => {
 
   const onSubmit = async (values: IFormData) => {
     try {
-      const response = await signIn({ input: values });
+      const response = await signIn(values);
 
       if (response) {
         navigate(PATHS.DASHBOARD.SELF);

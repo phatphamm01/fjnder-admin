@@ -4,8 +4,9 @@ import { FC, useEffect } from 'react';
 import { TableColumn } from 'react-data-table-component';
 import tw from 'twin.macro';
 import { Table } from '~/components/Table';
+import { Avatar } from '~/design/Avatar';
 import { ContentLayout } from '~/layouts/ContentLayout';
-import { User, useGetAllUser } from '~/api-graphql';
+import { User, useGetAllUser, useStatisticUser } from '~/api-graphql';
 
 const AllUserPageContainer = styled.div`
   ${tw``}
@@ -14,7 +15,7 @@ const AllUserPageContainer = styled.div`
 interface IAllUserPage {}
 
 export const AllUserPage: FC<IAllUserPage> = () => {
-  const [fetchGetAllUser, { loading, data: response }] = useGetAllUser([
+  const [fetchGetAllUser, { loading, data: response }] = useStatisticUser([
     'totalCount',
     {
       results: [
@@ -29,7 +30,7 @@ export const AllUserPage: FC<IAllUserPage> = () => {
     },
   ]);
 
-  const data = response?.getAllUser.results || [];
+  const data = response?.statisticUser.results || [];
 
   useEffect(() => {
     fetchGetAllUser();
@@ -38,34 +39,11 @@ export const AllUserPage: FC<IAllUserPage> = () => {
   const columnsTable = [
     {
       name: 'Avatar',
-      cell(row, rowIndex, column, id) {
-        return (
-          <img
-            className='inline-block h-10 w-10 rounded-full'
-            src={row.images?.[0]}
-            alt=''
-          />
-        );
-      },
+      cell: row => <Avatar image={row.images?.[0]} />,
     },
     { name: 'Họ và tên', selector: row => row.username },
     { name: 'Tuổi', selector: row => row.age },
-    { name: 'Giới thiệu', width: '300px', selector: row => row.aboutMe },
-    {
-      name: 'Tags',
-      cell(row, rowIndex, column, id) {
-        return row.tags?.map(value => (
-          <span
-            className={classnames([
-              'bg-primary-100 text-pribg-primary-800',
-              'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ',
-            ])}
-          >
-            {value.name}
-          </span>
-        ));
-      },
-    },
+    { name: 'Giới thiệu', width: '500px', selector: row => row.aboutMe },
   ] as TableColumn<NonNullable<User>>[];
 
   return (

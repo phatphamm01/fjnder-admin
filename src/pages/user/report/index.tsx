@@ -5,7 +5,10 @@ import { TableColumn } from 'react-data-table-component';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { apiCaller } from '~/service';
+import { ConfirmPopup } from '../../../components/ConfirmPopup/index';
+import { Popup } from '~/components/Popup';
 import { Table } from '~/components/Table';
+import { Avatar } from '~/design/Avatar';
 import { ContentLayout } from '~/layouts/ContentLayout';
 import { User, useGetAllReportsUser } from '~/api-graphql';
 
@@ -43,18 +46,30 @@ export const ReportPage: FC<IReportPage> = () => {
     fetchGetAllReportUser();
   }, []);
 
+  const onAccept = (user: User) => async () => {
+    try {
+      await apiCaller.confirmBlockUser().$args({ user_id: user._id }).$fetch();
+      toast.success('Chặn thành công');
+      fetchGetAllReportUser({
+        fetchPolicy: 'no-cache',
+      });
+    } catch (error) {}
+  };
+
+  const onDecline = (user: User) => async () => {
+    try {
+      await apiCaller.declineBlockUser().$args({ user_id: user._id }).$fetch();
+      toast.success('Bỏ qua thành công');
+      await fetchGetAllReportUser({
+        fetchPolicy: 'no-cache',
+      });
+    } catch (error) {}
+  };
+
   const columnsTable = [
     {
       name: 'Avatar',
-      cell(row, rowIndex, column, id) {
-        return (
-          <img
-            className='inline-block h-10 w-10 rounded-full'
-            src={row.images?.[0]}
-            alt=''
-          />
-        );
-      },
+      cell: row => <Avatar image={row.images?.[0]} />,
     },
     { name: 'Họ và tên', selector: row => row.username },
     {
@@ -103,38 +118,25 @@ export const ReportPage: FC<IReportPage> = () => {
       cell(row, rowIndex, column, id) {
         return (
           <div className='flex gap-4'>
+            <ConfirmPopup
+              title='Chấp nhận'
+              description='Bạn có chắn chắn muốn chặn người dùng này !'
+              onAccept={onAccept(row)}
+              ButtonComponent={({ ...rest }) => (
+                <span
+                  {...rest}
+                  className={classnames([
+                    'bg-red-100 text-red-800',
+                    'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 cursor-pointer',
+                  ])}
+                >
+                  Confirm
+                </span>
+              )}
+            />
+
             <span
-              onClick={async () => {
-                try {
-                  await apiCaller
-                    .confirmBlockUser()
-                    .$args({ user_id: row._id })
-                    .$fetch();
-                  toast.success('Báo cáo thành công');
-                  fetchGetAllReportUser();
-                } catch (error) {}
-              }}
-              className={classnames([
-                'bg-red-100 text-red-800',
-                'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 cursor-pointer',
-              ])}
-            >
-              Confirm
-            </span>
-            <span
-              onClick={async () => {
-                try {
-                  await apiCaller
-                    .declineBlockUser()
-                    .$args({ user_id: row._id })
-                    .$fetch();
-                  toast.success('Bỏ qua thành công');
-                  let a = await fetchGetAllReportUser({
-                    fetchPolicy: 'no-cache',
-                  });
-                  console.log({ a });
-                } catch (error) {}
-              }}
+              onClick={onDecline(row)}
               className={classnames([
                 'bg-gray-100 text-gray-800',
                 'inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 cursor-pointer',
