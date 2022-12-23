@@ -3,16 +3,17 @@ import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
 import classnames from 'classnames';
 import moment from 'moment';
 import 'moment/locale/vi';
-import { FC, useEffect, Fragment, useMemo } from 'react';
+import { FC, Fragment, useEffect, useMemo } from 'react';
 import { TableColumn } from 'react-data-table-component';
 import { toast } from 'react-toastify';
 import tw from 'twin.macro';
 import { apiCaller } from '~/service/index';
+import { Form } from '~/pages/manager/tabs/form';
 import { handleError } from '~/common/utils/handleError';
+import { Popup } from '~/components/Popup/index';
 import { Table } from '~/components/Table';
 import { ContentLayout } from '~/layouts/ContentLayout';
-import { useLoadingStore } from '~/api-graphql';
-import { Tag, useGetAllTag } from '~/api-graphql';
+import { Tag, useGetAllTag, useLoadingStore } from '~/api-graphql';
 
 moment.locale('vi');
 const TagPageContainer = styled.div`
@@ -57,12 +58,12 @@ export const TagPage: FC<ITagPage> = () => {
       handleError(error);
     }
   };
-  console.log({ deleteTagLoading });
 
   const columnsTable = useMemo(
     () =>
       [
         { name: 'Tên', selector: row => row.name },
+        { name: 'Type', selector: row => row.type },
         { name: 'Keyword', selector: row => row.keyword },
         {
           name: 'Updated At',
@@ -80,6 +81,49 @@ export const TagPage: FC<ITagPage> = () => {
           cell: (row, rowIndex, column, id) => {
             return (
               <div className='flex gap-4'>
+                <Popup
+                  title='Sửa Tag'
+                  ButtonComponent={props => (
+                    <PencilSquareIcon
+                      {...(props as any)}
+                      className='cursor-pointer'
+                      height={24}
+                    />
+                  )}
+                >
+                  {({ setIsOpen }) => (
+                    <Form
+                      initialValues={{
+                        name: row.name || '',
+                        type: row.type || '',
+                      }}
+                      onSubmit={async ({ name, type }) => {
+                        try {
+                          const response = await apiCaller
+                            .updateTag()
+                            .$args({
+                              tag_id: row._id!,
+                              input: { name, type: type || (row.type as any) },
+                            })
+                            .$fetch();
+
+                          if (response) {
+                            toast.success('Sửa thành công');
+                          } else {
+                            toast.error('Sửa thất bại');
+                          }
+                        } catch (error) {}
+                        setIsOpen(false);
+                        fetchGetTag({ fetchPolicy: 'no-cache' });
+                      }}
+                      onCancel={() => {
+                        setIsOpen(false);
+                      }}
+                      isEdit
+                    />
+                  )}
+                </Popup>
+
                 <TrashIcon
                   onClick={onDeleteTag(row)}
                   height={24}
@@ -88,8 +132,6 @@ export const TagPage: FC<ITagPage> = () => {
                     'text-red-600 cursor-pointer',
                   ])}
                 />
-
-                <PencilSquareIcon height={24} className='cursor-not-allowed' />
               </div>
             );
           },
@@ -99,26 +141,60 @@ export const TagPage: FC<ITagPage> = () => {
   );
 
   return (
-    <ContentLayout
-      title='Người dùng'
-      rightRenderComponent={
-        <Fragment>
-          <button
-            className='cursor-not-allowed group-hover:text-primary-400 group w-full justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-sm font-medium text-white hover:bg-primary-700 disabled:cursor-progress disabled:bg-neutral-600 disabled:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2'
-            onClick={() => {}}
-          >
-            Thêm
-          </button>
-        </Fragment>
-      }
-    >
-      <TagPageContainer>
-        <Table
-          columns={columnsTable}
-          data={data}
-          progressPending={fetchGetTagLoading}
-        />
-      </TagPageContainer>
-    </ContentLayout>
+    <Fragment>
+      <ContentLayout
+        title='Quản lí tag'
+        rightRenderComponent={
+          <Fragment>
+            <Popup
+              title='Thêm Tag'
+              ButtonComponent={props => (
+                <button
+                  {...(props as any)}
+                  className=' group-hover:text-primary-400 group w-full justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-sm font-medium text-white hover:bg-primary-700 disabled:cursor-progress disabled:bg-neutral-600 disabled:text-neutral-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2'
+                >
+                  Thêm
+                </button>
+              )}
+            >
+              {({ setIsOpen }) => (
+                <Form
+                  initialValues={{ name: '', type: '' }}
+                  onSubmit={async ({ name, type }) => {
+                    try {
+                      const response = await apiCaller
+                        .createTag()
+                        .$args({
+                          input: { name, type: type as any },
+                        })
+                        .$fetch();
+
+                      if (response) {
+                        toast.success('Thêm thành công');
+                      } else {
+                        toast.error('Thêm thất bại');
+                      }
+                    } catch (error) {}
+                    setIsOpen(false);
+                    fetchGetTag({ fetchPolicy: 'no-cache' });
+                  }}
+                  onCancel={() => {
+                    setIsOpen(false);
+                  }}
+                />
+              )}
+            </Popup>
+          </Fragment>
+        }
+      >
+        <TagPageContainer>
+          <Table
+            columns={columnsTable}
+            data={data}
+            progressPending={fetchGetTagLoading}
+          />
+        </TagPageContainer>
+      </ContentLayout>
+    </Fragment>
   );
 };

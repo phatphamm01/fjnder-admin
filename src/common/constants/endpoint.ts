@@ -1,1 +1,1 @@
-export const ENDPOINT = 'https://fluent-basin-production.up.railway.app';
+export const ENDPOINT = 'https://finder-production.up.railway.app';

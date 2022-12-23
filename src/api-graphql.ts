@@ -89,18 +89,12 @@ const guessFragmentType = (fragment: string | DocumentNode) => {
 
 import {
   DocumentNode,
-  gql,
-  useMutation,
-  useLazyQuery,
-  useSubscription,
-  QueryHookOptions,
-  MutationHookOptions,
-  SubscriptionHookOptions,
-  MutationTuple,
+  gql, MutationHookOptions, QueryHookOptions, useLazyQuery, useMutation
 } from '@apollo/client';
 
-import { OperationDefinitionNode } from 'graphql';
 import { ApolloClient, execute } from '@apollo/client/core';
+import { OperationDefinitionNode } from 'graphql';
+import create from 'zustand';
 
 export interface Address {
   city: Maybe<string>;
@@ -627,7 +621,6 @@ export type ExecutableQueryWithArgs<T, A> = QueryWithArgs<T, A>;
 export interface ExecutableQueryWithOptionalArgs<T, A>
   extends QueryWithOptionalArgs<T, A>,
     Executable<T> {}
-import create from 'zustand';
 export const useLoadingStore = create<
   {
     [K in keyof ReturnType<typeof apiProvider> as K extends `${string}`
@@ -641,6 +634,7 @@ export const useLoadingStore = create<
     set({ [`${name}Loading`]: loading });
   },
 }));
+
 
 export const apiProvider = (apolloClient: ApolloClient<any>) => {
   const abortableQuery = <T, A = null>(

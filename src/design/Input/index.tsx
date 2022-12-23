@@ -1,7 +1,7 @@
 import { useField } from 'formik';
 import { ReactNode, useId, useState } from 'react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import tw, { TwStyle, styled } from 'twin.macro';
+import tw, { styled, TwStyle } from 'twin.macro';
 
 type Width = 'auto' | 'full';
 
@@ -52,7 +52,7 @@ const Input = ({
   return (
     <div>
       {label && (
-        <label className='block mb-1 text-16 font-semibold' htmlFor={id}>
+        <label className='block mb-1 text-16 font-medium' htmlFor={id}>
           {label}
         </label>
       )}

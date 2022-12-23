@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Dialog, Transition } from '@headlessui/react';
-import { FC, useState, Fragment } from 'react';
+import { FC, Fragment, useState } from 'react';
 import tw from 'twin.macro';
 
 const PopupContainer = styled.div`
@@ -9,7 +9,7 @@ const PopupContainer = styled.div`
 
 interface IPopup {
   title: string;
-  ButtonComponent: FC<React.ComponentProps<'div'>>;
+  ButtonComponent: FC<React.ComponentProps<any>>;
   children?: (props: {
     isOpen: boolean;
     setIsOpen: (open: boolean) => void;
